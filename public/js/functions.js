@@ -12,7 +12,7 @@
 * ASYNC Function - Get all products.
 */
 const getProducts = async function() {
-    const response = await fetch('http://localhost:3000/products')
+    const response = await fetch('http://localhost:3002/products')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -25,7 +25,7 @@ const getProducts = async function() {
 * ASYNC Function - Get all suppliers.
 */
 const getSuppliers = async function() {
-    const response = await fetch('http://localhost:3000/suppliers')
+    const response = await fetch('http://localhost:3002/suppliers')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -38,7 +38,7 @@ const getSuppliers = async function() {
 * ASYNC Function - Get all customers.
 */
 const getCustomers = async function() {
-    const response = await fetch('http://localhost:3000/customers')
+    const response = await fetch('http://localhost:3002/customers')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -52,7 +52,7 @@ const getCustomers = async function() {
  * @param {object} objectData - Object of datas.
  */
 const insertProduct = async function(objectData) {
-    const response = await fetch('http://localhost:3000/products', {
+    const response = await fetch('http://localhost:3002/products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ const insertProduct = async function(objectData) {
  * @param {object} objectData - Object of datas.
  */
 const insertSupplier = async function(objectData) {
-    const response = await fetch('http://localhost:3000/suppliers', {
+    const response = await fetch('http://localhost:3002/suppliers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ const insertSupplier = async function(objectData) {
  * @param {object} objectData - Object of datas.
  */
 const insertCustomer = async function(objectData) {
-    const response = await fetch('http://localhost:3000/customers', {
+    const response = await fetch('http://localhost:3002/customers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -108,7 +108,7 @@ const insertCustomer = async function(objectData) {
 
 
 
-const formSubmit = async function(htmlForm, className, insertFunction, getFunction, idModal) {
+const formSubmit = function(htmlForm, className, insertFunction, getFunction, idModal) {
 
     // On form Submit.
     htmlForm.addEventListener('submit', (e) => {

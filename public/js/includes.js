@@ -1,31 +1,38 @@
 function includeHTML() {
   return new Promise((resolve, reject) => {
-    var z, i, elmnt, file, xhttp
-    /*loop through a collection of all HTML elements:*/
-    z = document.getElementsByTagName("*")
-    for (i = 0; i < z.length; i++) {
-      elmnt = z[i]
-      /*search for elements with a certain atrribute:*/
-      file = elmnt.getAttribute("w3-include-html")
-      if (file) {
-        /*make an HTTP request using the attribute value as the file name:*/
-        xhttp = new XMLHttpRequest()
-        xhttp.onreadystatechange = function() {
-          if (this.readyState == 4) {
-            if (this.status == 200) {elmnt.innerHTML = this.responseText}
-            if (this.status == 404) {elmnt.innerHTML = "Page not found."}
-            /*remove the attribute, and call this function once more:*/
-            elmnt.removeAttribute("w3-include-html")
-            includeHTML()
+
+      let arrayIncludeNode = document.querySelectorAll("*[w3-include-html]")
+      let countNode = arrayIncludeNode.length
+
+      arrayIncludeNode.forEach((item, index) => {
+        let link = item.getAttribute("w3-include-html")
+
+        fetch(link, {
+          method: "GET"
+        })
+        .then((response) => {
+          if(response.ok)
+          {
+            response.text()
+            .then((datas) =>
+            {
+              console.log(datas.substring(0,10))
+              item.innerHTML = datas
+              item.removeAttribute("w3-include-html")
+
+              //resolve ici  --> ok ok c'est dégueu LOL
+              if(index == countNode-1)
+                resolve()
+            })
           }
-        }      
-        xhttp.open("GET", file, true)
-        xhttp.send()
-        /*exit the function:*/
-        return
-      }
-    }
+        })
+        .catch((e) => {
+          item.innerHTML = "Page not found."
+        })
+      })
+
   })
+  
 }
 
 export default includeHTML
