@@ -1,0 +1,24 @@
+// 
+// Navigation.
+// 
+.st0 {
+    fill:#75A928;
+}
+
+.st1 {
+    fill:#BC1142;
+}
+
+symbol > path {
+    filter: invert(1);
+}
+
+ul.nav {
+
+    a.nav-link {
+        
+        &:hover {
+            color: lighten($color: #BC1142, $amount: 20%) !important;
+        }
+    }
+}

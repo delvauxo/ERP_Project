@@ -1,0 +1,17 @@
+.st0 {
+  fill: #75A928;
+}
+
+.st1 {
+  fill: #BC1142;
+}
+
+symbol > path {
+  -webkit-filter: invert(1);
+          filter: invert(1);
+}
+
+ul.nav a.nav-link:hover {
+  color: #ee4575 !important;
+}
+/*# sourceMappingURL=style.css.map */
