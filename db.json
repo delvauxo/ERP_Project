@@ -89,6 +89,39 @@
       "price_sell": "4",
       "supplier": "Carrefour",
       "price_supplier": "1"
+    },
+    {
+      "id": 10
+    },
+    {
+      "id": 11,
+      "name": "aze",
+      "category": "fruit",
+      "origin": "Afghanistan",
+      "stock": "1 ",
+      "price_sell": "1",
+      "supplier": "Carrefour",
+      "price_supplier": "1"
+    },
+    {
+      "id": 12,
+      "name": "Peche",
+      "category": "fruit",
+      "origin": "Azerbaijan",
+      "stock": "50",
+      "price_sell": "4",
+      "supplier": "Carrefour",
+      "price_supplier": "1"
+    },
+    {
+      "id": 13,
+      "name": "azr",
+      "category": "fruit",
+      "origin": "Afghanistan",
+      "stock": "",
+      "price_sell": "",
+      "supplier": "Carrefour",
+      "price_supplier": ""
     }
   ],
   "customers": [

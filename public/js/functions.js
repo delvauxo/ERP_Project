@@ -109,9 +109,9 @@ const insertCustomer = async function(objectData) {
 
 
 const formSubmit = async function(htmlForm, className, insertFunction, getFunction, idModal) {
-    
+
     // On form Submit.
-    htmlForm.addEventListener('submit', async (e) => {
+    htmlForm.addEventListener('submit', (e) => {
         
         // Prevent default behavior.
         e.preventDefault()
@@ -120,19 +120,20 @@ const formSubmit = async function(htmlForm, className, insertFunction, getFuncti
         const datas = Object.fromEntries(formData)
     
         // Instanciate new class Object with form datas.
-        const product = await eval("new " + className + "(datas)")
-    
+        const product = Object.assign(datas, className)
+        console.log(product)
+
         // Insert new Product in API database.
-        await insertFunction(product)
+        insertFunction(product)
         .then(async function() {
             // Hide modal after datas sent (jQuery).
-            await $(idModal).modal('hide')
+            $(idModal).modal('hide')
             // Reset form after modal is hidden.
-            await htmlForm.reset()
+            htmlForm.reset()
             // Fetch new datas after form reset.
             const products  = await getFunction()
             // Reload listing with new data inserted after getting new listing with new product.
-            await createTable(products, document.querySelector('#listing'))
+            createTable(products, document.querySelector('#listing'))
         })
     })
 
@@ -203,7 +204,7 @@ function createListingDatas(arrayLinks, inputSubmit) {
             // Fetch datas from API.
             const datas = await fetchDatas(window.location.origin + '/' + this.dataset.listing + 's')
             // Create HTML products listing table.
-            await createTable(datas, document.querySelector('#listing'))
+            createTable(datas, document.querySelector('#listing'))
             // Display add button.
             inputSubmit.classList.remove('d-none')
             // Set attributes to add button.
@@ -211,19 +212,17 @@ function createListingDatas(arrayLinks, inputSubmit) {
             inputSubmit.setAttribute('data-page', this.dataset.listing)
             inputSubmit.setAttribute('data-bs-target', '#' + this.dataset.listing + 'Modal')
             // On add button click.
-            inputSubmit.addEventListener('click', function(e) {
-                // Stop Immediate propagation if click on multiples menu btns before add item.
-                e.stopImmediatePropagation()
+            inputSubmit.addEventListener('click', async function(e) {
+                // Stop propagation if click on multiples menu btns before add item.
+                e.stopPropagation()
                 // If page is PRODUCT.
                 if (this.dataset.page === 'product') {
-                    (async function() {
-                        // Fetch suppliers datas from API.
-                        const suppliers  = await fetchDatas(window.location.origin + '/suppliers')
-                        // Add suppliers to new product select form.
-                        createSelectOptions(suppliers, document.querySelector('#product-supplier'))
-                        // Load countries datas from API and insert them in select.
-                        loadCountries(document.querySelector("#product-country"))
-                    })()
+                    // Fetch suppliers datas from API.
+                    const suppliers  = await fetchDatas(window.location.origin + '/suppliers')
+                    // Add suppliers to new product select form.
+                    createSelectOptions(suppliers, document.querySelector('#product-supplier'))
+                    // Load countries datas from API and insert them in select.
+                    loadCountries(document.querySelector("#product-country"))
                 }
             })
         })
@@ -250,7 +249,7 @@ function createSelectOptions(datas, htmlElem) {
  * @param {Array} datas - Array of datas.
  * @param {html} htmlElem - DOM HTML element.
  */
-async function createTable(datas, htmlElem) {
+function createTable(datas, htmlElem) {
 
     let html = ''
     // If at least 1 data exists.

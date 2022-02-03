@@ -25,5 +25,9 @@ class Product {
         this.name = value
     }
 
+    getInstance() {
+        return new this
+    }
+
 } 
 export default Product
