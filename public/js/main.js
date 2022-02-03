@@ -1,7 +1,7 @@
+import includeHTMLs from "./includes.js"
 import Supplier from "../models/Supplier.js"
 import Product from "../models/Product.js"
 import Customer from "../models/Customer.js"
-import includeHTMLs from "./includes.js"
 
 // Make HTML includes.
 await includeHTMLs(document.querySelectorAll('[include-html]'))

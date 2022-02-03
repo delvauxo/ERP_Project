@@ -200,11 +200,13 @@ function createListingDatas(arrayLinks, inputSubmit) {
     for (const link of arrayLinks) {
         link.addEventListener('click', async function(e) {
             // Cancel default behavior.
-            // e.preventDefault()
+            e.preventDefault()
             // Fetch datas from API.
             const datas = await fetchDatas(window.location.origin + '/' + this.dataset.listing + 's')
             // Create HTML products listing table.
             createTable(datas, document.querySelector('#listing'))
+            // Scroll to top of listing just created.
+            document.querySelector('#listing').scrollIntoView()
             // Display add button.
             inputSubmit.classList.remove('d-none')
             // Set attributes to add button.
@@ -214,7 +216,7 @@ function createListingDatas(arrayLinks, inputSubmit) {
             // On add button click.
             inputSubmit.addEventListener('click', async function(e) {
                 // Stop propagation if click on multiples menu btns before add item.
-                e.stopPropagation()
+                e.stopImmediatePropagation()
                 // If page is PRODUCT.
                 if (this.dataset.page === 'product') {
                     // Fetch suppliers datas from API.
