@@ -104,6 +104,10 @@ const insertCustomer = async function(objectData) {
     }
 }
 
+// const deleteItem = function(itemID) {
+
+// }
+
 /**
  * Function - On form submit, insert new datas item in API database.
  * @param {html} htmlForm - Form to be submited.
@@ -174,6 +178,28 @@ function loadCountries(selectElem) {
 }
 
 /**
+ * Function - Delete listing item.
+ * @param {array} arrayDeleteBtns - Array of delete buttons.
+ */
+const deleteItem = function(arrayDeleteBtns) {
+    // On delete button click.
+    for (const btn of arrayDeleteBtns) {
+        btn.addEventListener('click', async function(e) {
+            // Get ID of item to delete.
+            const id = e.target.parentElement.parentElement.cells[0].innerHTML
+            const page = document.querySelector('#btn-add').dataset.page + 's'
+            await fetch(window.location.origin + '/' + page + '/' + id, {method: 'DELETE'})
+            // Fetch new datas after item deleted.
+            const items  = await fetchDatas(window.location.origin + '/' + page, {method: 'GET'})
+            // Reload listing with new data inserted after getting new listing with new product.
+            createTable(items, document.querySelector('#listing'))
+            // Recursive function for more than one delete action.
+            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
+        })
+    }
+}
+
+/**
  * Function - Create Listing of datas from API.
  * @param {array} arrayLinks - Links that have data-listing attribute.
  * @param {html} inputSubmit - Input type submit button.
@@ -192,8 +218,6 @@ function createListingDatas(arrayLinks, inputSubmit) {
             createTable(datas, document.querySelector('#listing'))
             // Add Listing title.
             document.querySelector('#listing-title').innerHTML = capitalizeFirstLetter(this.dataset.listing) + 's'
-            // Scroll to top of listing just created.
-            document.querySelector('#listing').scrollIntoView()
             // Display add button.
             inputSubmit.classList.remove('d-none')
             // Set attributes to add button.
@@ -214,6 +238,8 @@ function createListingDatas(arrayLinks, inputSubmit) {
                     loadCountries(document.querySelector("#product-country"))
                 }
             })
+            // On delete button click.
+            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
         })
     }
 }
