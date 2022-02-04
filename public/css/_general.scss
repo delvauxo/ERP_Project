@@ -3,8 +3,8 @@
 // 
 
 body {
-    // Firefox bug navbar scroll.
-    overflow: scroll;
+    // Navbar fixed top height.
+    padding-top: 86px;
 }
 
 // Navbar.
