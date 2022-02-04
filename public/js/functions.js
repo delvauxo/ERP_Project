@@ -104,24 +104,24 @@ const insertCustomer = async function(objectData) {
     }
 }
 
-
-
-
-
+/**
+ * Function - On form submit, insert new datas item in API database.
+ * @param {html} htmlForm - Form to be submited.
+ * @param {class} className - Class object.
+ * @param {function} insertFunction - The appropriate function item to insert.
+ * @param {function} getFunction - The appropriate function item to get.
+ * @param {string} idModal - HTML id value of the modal to be shown.
+ */
 const formSubmit = function(htmlForm, className, insertFunction, getFunction, idModal) {
-
     // On form Submit.
     htmlForm.addEventListener('submit', (e) => {
-        
         // Prevent default behavior.
         e.preventDefault()
         // Retrieve datas from form.
         const formData = new FormData(e.target)
         const datas = Object.fromEntries(formData)
-    
         // Instanciate new class Object with form datas.
         const product = Object.assign(datas, className)
-
         // Insert new Product in API database.
         insertFunction(product)
         .then(async function() {
@@ -135,7 +135,6 @@ const formSubmit = function(htmlForm, className, insertFunction, getFunction, id
             createTable(products, document.querySelector('#listing'))
         })
     })
-
 }
 
 
