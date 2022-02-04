@@ -137,20 +137,6 @@ const formSubmit = function(htmlForm, className, insertFunction, getFunction, id
     })
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Function - Capitalize first letter.
  * @param {String} string - String to capitalize first letter.
@@ -159,7 +145,6 @@ const formSubmit = function(htmlForm, className, insertFunction, getFunction, id
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
 
 /**
  * Function - Create countries name options for HTML select.
@@ -259,17 +244,22 @@ function createTable(datas, htmlElem) {
     // If at least 1 data exists.
     if(datas.length > 0) {
         html += `<div class="table-responsive">`
-        html += `<table class="table table-dark table-hover table-bordered">`
+        html += `<table class="table table-dark table-hover">`
         html += `<thead>`
         for (const key of Object.keys(datas[0])) {
             html += `<th>${key}</th>`
         }
+        html += `<th>Actions</th>`
         html += `</thead>`
         for (const data of datas) {
             html += `<tr>` 
             for (const value of Object.values(data)) {
                 html += `<td>${value}</td>` 
             }
+            html += `<td class="listing-item-actions">`
+            html += `<input class="btn btn-warning btn-sm" type="button" value="Edit">`
+            html += `<input class="btn btn-danger btn-sm" type="button" value="Delete">`
+            html += `</td>`
             html += `</tr>`
         }
         html += `</table>`

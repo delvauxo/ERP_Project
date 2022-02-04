@@ -23,4 +23,15 @@ symbol > path,
   -webkit-filter: invert(1);
           filter: invert(1);
 }
+
+#listing table .listing-item-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 15px;
+}
+
+#listing table .listing-item-actions .btn {
+  padding: .125rem 1rem;
+}
 /*# sourceMappingURL=style.css.map */
