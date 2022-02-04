@@ -201,10 +201,14 @@ function createListingDatas(arrayLinks, inputSubmit) {
         link.addEventListener('click', async function(e) {
             // Cancel default behavior.
             e.preventDefault()
+            // Hide Hero section.
+            document.querySelector('#hero').classList.add('d-none')
             // Fetch datas from API.
             const datas = await fetchDatas(window.location.origin + '/' + this.dataset.listing + 's')
             // Create HTML products listing table.
             createTable(datas, document.querySelector('#listing'))
+            // Add Listing title.
+            document.querySelector('#listing').insertAdjacentHTML("afterbegin", `<h2>${capitalizeFirstLetter(this.dataset.listing)}s</h2>`)
             // Scroll to top of listing just created.
             document.querySelector('#listing').scrollIntoView()
             // Display add button.
