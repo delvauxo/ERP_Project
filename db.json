@@ -89,6 +89,26 @@
       "price_sell": "4",
       "supplier": "Carrefour",
       "price_supplier": "1"
+    },
+    {
+      "id": 10,
+      "name": "Carotte",
+      "category": "vegetable",
+      "origin": "Kazakhstan",
+      "stock": "20",
+      "price_sell": "3",
+      "supplier": "Carrefour",
+      "price_supplier": "1"
+    },
+    {
+      "id": 11,
+      "name": "Brocoli",
+      "category": "vegetable",
+      "origin": "Ukraine",
+      "stock": "40",
+      "price_sell": "4",
+      "supplier": "Carrefour",
+      "price_supplier": "2"
     }
   ],
   "customers": [
@@ -154,6 +174,13 @@
       "city": "Forest",
       "product_id": "2",
       "total_purchases": "1000"
+    },
+    {
+      "id": 4,
+      "name": "Delhaize",
+      "city": "Bruxelles",
+      "product_id": "2",
+      "total_purchases": "724"
     }
   ]
 }

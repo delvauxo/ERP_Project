@@ -121,7 +121,6 @@ const formSubmit = function(htmlForm, className, insertFunction, getFunction, id
     
         // Instanciate new class Object with form datas.
         const product = Object.assign(datas, className)
-        console.log(product)
 
         // Insert new Product in API database.
         insertFunction(product)
@@ -208,7 +207,7 @@ function createListingDatas(arrayLinks, inputSubmit) {
             // Create HTML products listing table.
             createTable(datas, document.querySelector('#listing'))
             // Add Listing title.
-            document.querySelector('#listing').insertAdjacentHTML("afterbegin", `<h2>${capitalizeFirstLetter(this.dataset.listing)}s</h2>`)
+            document.querySelector('#listing-title').innerHTML = capitalizeFirstLetter(this.dataset.listing) + 's'
             // Scroll to top of listing just created.
             document.querySelector('#listing').scrollIntoView()
             // Display add button.
