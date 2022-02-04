@@ -1,3 +1,15 @@
+body {
+  overflow: scroll;
+}
+
+.navbar a.nav-link {
+  padding: .5rem 1rem !important;
+}
+
+.navbar a.nav-link:hover {
+  color: #ee4575 !important;
+}
+
 .st0 {
   fill: #75A928;
 }
@@ -6,12 +18,9 @@
   fill: #BC1142;
 }
 
-symbol > path {
+symbol > path,
+.navbar path {
   -webkit-filter: invert(1);
           filter: invert(1);
-}
-
-ul.nav a.nav-link:hover {
-  color: #ee4575 !important;
 }
 /*# sourceMappingURL=style.css.map */

@@ -1,6 +1,25 @@
 // 
 // Navigation.
 // 
+
+body {
+    // Firefox bug navbar scroll.
+    overflow: scroll;
+}
+
+// Navbar.
+.navbar {
+
+    a.nav-link {
+        padding: .5rem 1rem !important;
+        
+        &:hover {
+            color: lighten($color: #BC1142, $amount: 20%) !important;
+        }
+    }
+}
+
+// Logo SVG colors.
 .st0 {
     fill:#75A928;
 }
@@ -9,16 +28,8 @@
     fill:#BC1142;
 }
 
-symbol > path {
+// Navbar SVGs.
+symbol > path,
+.navbar path {
     filter: invert(1);
-}
-
-ul.nav {
-
-    a.nav-link {
-        
-        &:hover {
-            color: lighten($color: #BC1142, $amount: 20%) !important;
-        }
-    }
 }
