@@ -188,9 +188,9 @@ const deleteItem = function(arrayDeleteBtns) {
             // Get ID of item to delete.
             const id = e.target.parentElement.parentElement.cells[0].innerHTML
             const page = document.querySelector('#btn-add').dataset.page + 's'
-            await fetch(window.location.origin + '/' + page + '/' + id, {method: 'DELETE'})
+            await fetch('https://my-json-server.typicode.com/delvauxo/erp_project/' + page + '/' + id, {method: 'DELETE'})
             // Fetch new datas after item deleted.
-            const items  = await fetchDatas(window.location.origin + '/' + page, {method: 'GET'})
+            const items  = await fetchDatas('https://my-json-server.typicode.com/delvauxo/erp_project/' + page, {method: 'GET'})
             // Reload listing with new data inserted after getting new listing with new product.
             createTable(items, document.querySelector('#listing'))
             // Recursive function for more than one delete action.
@@ -213,7 +213,7 @@ function createListingDatas(arrayLinks, inputSubmit) {
             // Hide Hero section.
             document.querySelector('#hero').classList.add('d-none')
             // Fetch datas from API.
-            const datas = await fetchDatas(window.location.origin + '/' + this.dataset.listing + 's')
+            const datas = await fetchDatas('https://my-json-server.typicode.com/delvauxo/erp_project/' + this.dataset.listing + 's')
             // Create HTML products listing table.
             createTable(datas, document.querySelector('#listing'))
             // Add Listing title.
