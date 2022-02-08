@@ -141,7 +141,6 @@ const deleteItem = function(arrayDeleteBtns) {
 */
 const editItem = function(arrayEditBtns) {
     // On edit button click.
-    console.log(arrayEditBtns)
     for (const btn of arrayEditBtns) {
         btn.addEventListener('click', async function(e) {
             console.log('edit clicked')
@@ -253,49 +252,42 @@ function loadCountries(selectElem) {
 
 /**
  * Function - Create Listing of datas from API.
- * @param {array} arrayLinks - Links that have data-listing attribute.
  * @param {html} inputSubmit - Input type submit button.
  */
-function createListingDatas(arrayLinks, inputSubmit) {
-    // For each link.
-    for (const link of arrayLinks) {
-        link.addEventListener('click', async function(e) {
-            // Cancel default behavior.
-            e.preventDefault()
-            // Hide Hero section.
-            document.querySelector('#hero').classList.add('d-none')
-            // Fetch datas from API.
-            const datas = await fetchDatas(domainName + '/' + this.dataset.listing + 's')
-            // Create HTML products listing table.
-            createTable(datas, document.querySelector('#listing'))
-            // Add Listing title.
-            document.querySelector('#listing-title').innerHTML = capitalizeFirstLetter(this.dataset.listing) + 's'
-            // Display add button.
-            inputSubmit.classList.remove('d-none')
-            // Set attributes to add button.
-            inputSubmit.setAttribute('value', 'Add a ' + capitalizeFirstLetter(this.dataset.listing))
-            inputSubmit.setAttribute('data-page', this.dataset.listing)
-            inputSubmit.setAttribute('data-bs-target', '#' + this.dataset.listing + 'Modal')
-            // On add button click.
-            inputSubmit.addEventListener('click', async function(e) {
-                // Stop propagation if click on multiples menu btns before add item.
-                e.stopImmediatePropagation()
-                // If page is PRODUCT.
-                if (this.dataset.page === 'product') {
-                    // Fetch suppliers datas from API.
-                    const suppliers  = await fetchDatas(window.location.origin + '/suppliers')
-                    // Add suppliers to new product select form.
-                    createSelectOptions(suppliers, document.querySelector('#product-supplier'))
-                    // Load countries datas from API and insert them in select.
-                    loadCountries(document.querySelector("#product-country"))
-                }
-            })
-            // On edit button click.
-            editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
-            // On delete button click.
-            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
-        })
-    }
+async function createListingDatas(listing) {
+    // Hide Hero section.
+    document.querySelector('#hero').classList.add('d-none')
+    // Fetch datas from API.
+    const datas = await fetchDatas(domainName + '/' + listing.dataset.listing + 's')
+    // Add listing title.
+    document.querySelector('#listing-title').innerHTML = capitalizeFirstLetter(listing.dataset.listing) + 's'
+    // Create HTML products listing table.
+    createTable(datas, document.querySelector('#listing'))
+    const inputSubmit = document.querySelector('#btn-add')
+    // Display add button.
+    inputSubmit.classList.remove('d-none')
+    // Set attributes to add button.
+    inputSubmit.setAttribute('value', 'Add a ' + capitalizeFirstLetter(listing.dataset.listing))
+    inputSubmit.setAttribute('data-page', listing.dataset.listing)
+    inputSubmit.setAttribute('data-bs-target', '#' + listing.dataset.listing + 'Modal')
+    // On add button click.
+    inputSubmit.addEventListener('click', async function(e) {
+        // Stop propagation if click on multiples menu btns before add item.
+        e.stopImmediatePropagation()
+        // If page is PRODUCT.
+        if (this.dataset.page === 'product') {
+            // Fetch suppliers datas from API.
+            const suppliers  = await fetchDatas(window.location.origin + '/suppliers')
+            // Add suppliers to new product select form.
+            createSelectOptions(suppliers, document.querySelector('#product-supplier'))
+            // Load countries datas from API and insert them in select.
+            loadCountries(document.querySelector("#product-country"))
+        }
+    })
+    // On edit button click.
+    editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
+    // On delete button click.
+    deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
 }
 
 /**

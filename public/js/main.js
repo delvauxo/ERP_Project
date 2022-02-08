@@ -6,8 +6,16 @@ import Customer from "../models/Customer.js"
 // Make HTML includes.
 await includeHTMLs(document.querySelectorAll('[include-html]'))
 
-// Create links listings.
-createListingDatas(document.querySelectorAll('[data-listing]'), document.querySelector('#btn-add'))
+// Create listings.
+const listings = document.querySelectorAll('[data-listing]')
+for (const listing of listings) {
+    listing.addEventListener('click', function(e) {
+        // Cancel default behavior.
+        e.preventDefault()
+        // Create listing.
+        createListingDatas(listing)
+    })
+}
 
 // On form Submits new form datas are sent to API database.
 formSubmit(document.querySelector('#form-product'), Product, insertProduct, getProducts, '#productModal')
