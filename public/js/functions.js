@@ -1,3 +1,8 @@
+// 
+// Global Variables.
+// 
+const domainName = 'http://localhost:3000'
+
 /**
  * Function - Fetch datas.
  * @param {String} url - URL of the API to fetch.
@@ -12,7 +17,7 @@
 * ASYNC Function - Get all products.
 */
 const getProducts = async function() {
-    const response = await fetch('http://localhost:3000/products')
+    const response = await fetch(domainName + '/products')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -25,7 +30,7 @@ const getProducts = async function() {
 * ASYNC Function - Get all suppliers.
 */
 const getSuppliers = async function() {
-    const response = await fetch('http://localhost:3000/suppliers')
+    const response = await fetch(domainName + '/suppliers')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -38,7 +43,7 @@ const getSuppliers = async function() {
 * ASYNC Function - Get all customers.
 */
 const getCustomers = async function() {
-    const response = await fetch('http://localhost:3000/customers')
+    const response = await fetch(domainName + '/customers')
     if (response.ok) {
         const data = await response.json()
         return data
@@ -52,7 +57,7 @@ const getCustomers = async function() {
  * @param {object} objectData - Object of datas.
  */
 const insertProduct = async function(objectData) {
-    const response = await fetch('http://localhost:3000/products', {
+    const response = await fetch(domainName + '/products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -71,7 +76,7 @@ const insertProduct = async function(objectData) {
  * @param {object} objectData - Object of datas.
  */
 const insertSupplier = async function(objectData) {
-    const response = await fetch('http://localhost:3000/suppliers', {
+    const response = await fetch(domainName + '/suppliers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -90,7 +95,7 @@ const insertSupplier = async function(objectData) {
  * @param {object} objectData - Object of datas.
  */
 const insertCustomer = async function(objectData) {
-    const response = await fetch('http://localhost:3000/customers', {
+    const response = await fetch(domainName + '/customers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -104,9 +109,74 @@ const insertCustomer = async function(objectData) {
     }
 }
 
-// const deleteItem = function(itemID) {
+/**
+ * Function - Delete listing item.
+ * @param {array} arrayDeleteBtns - Array of delete buttons.
+ */
+const deleteItem = function(arrayDeleteBtns) {
+    // On delete button click.
+    for (const btn of arrayDeleteBtns) {
+        btn.addEventListener('click', async function(e) {
+            // // Get ID of item to delete.
+            const id = this.dataset.index
+            const page = document.querySelector('#btn-add').dataset.page + 's'
+            await fetch(domainName + '/' + page + '/' + id, {method: 'DELETE'})
+            // Fetch new datas after item deleted.
+            const items  = await fetchDatas(domainName + '/' + page, {method: 'GET'})
+            // Reload listing with new data inserted after getting new listing with new product.
+            createTable(items, document.querySelector('#listing'))
+            // Recursive function for more than one delete action.
+            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
+            // On edit button click.
+            editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
+        })
+    }
+}
 
-// }
+/**
+* 
+* @param {*} id 
+* @param {Array} arrayEditBtns - Array of edit buttons.
+* @param {Object} objectData - Object of item datas.
+*/
+const editItem = function(arrayEditBtns) {
+    // On edit button click.
+    console.log(arrayEditBtns)
+    for (const btn of arrayEditBtns) {
+        btn.addEventListener('click', async function(e) {
+            console.log('edit clicked')
+            // Get ID of item to delete.
+            const id = e.target.parentElement.parentElement.cells[0].innerHTML
+            const page = document.querySelector('#btn-add').dataset.page + 's'
+            const response = await fetch(domainName + '/' + page + '/' + id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify(objectData) from function params
+                body: JSON.stringify({
+                    id: '',
+                    name: 'edited name',
+                    category: 'edited category',
+                    origin: 'edited country',
+                    stock: 'edited stock',
+                    price_sell: 'edited price_sell',
+                    supplier: 'edited supplier',
+                    price_supplier: 'edited price_supplier'
+                })
+            })
+            console.log(response)
+            // Fetch new datas after item deleted.
+            const items  = await fetchDatas(domainName + '/' + page, {method: 'GET'})
+            // Reload listing with new data inserted after getting new listing with new product.
+            createTable(items, document.querySelector('#listing'))
+            // On delete button click.
+            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
+            // Recursive function for more than one edit action.
+            editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
+        })
+    }
+}
 
 /**
  * Function - On form submit, insert new datas item in API database.
@@ -137,6 +207,10 @@ const formSubmit = function(htmlForm, className, insertFunction, getFunction, id
             const products  = await getFunction()
             // Reload listing with new data inserted after getting new listing with new product.
             createTable(products, document.querySelector('#listing'))
+            // On delete button click.
+            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
+            // On edit button click.
+            editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
         })
     })
 }
@@ -178,28 +252,6 @@ function loadCountries(selectElem) {
 }
 
 /**
- * Function - Delete listing item.
- * @param {array} arrayDeleteBtns - Array of delete buttons.
- */
-const deleteItem = function(arrayDeleteBtns) {
-    // On delete button click.
-    for (const btn of arrayDeleteBtns) {
-        btn.addEventListener('click', async function(e) {
-            // Get ID of item to delete.
-            const id = e.target.parentElement.parentElement.cells[0].innerHTML
-            const page = document.querySelector('#btn-add').dataset.page + 's'
-            await fetch(window.location.origin + '/' + page + '/' + id, {method: 'DELETE'})
-            // Fetch new datas after item deleted.
-            const items  = await fetchDatas(window.location.origin + '/' + page, {method: 'GET'})
-            // Reload listing with new data inserted after getting new listing with new product.
-            createTable(items, document.querySelector('#listing'))
-            // Recursive function for more than one delete action.
-            deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
-        })
-    }
-}
-
-/**
  * Function - Create Listing of datas from API.
  * @param {array} arrayLinks - Links that have data-listing attribute.
  * @param {html} inputSubmit - Input type submit button.
@@ -213,7 +265,7 @@ function createListingDatas(arrayLinks, inputSubmit) {
             // Hide Hero section.
             document.querySelector('#hero').classList.add('d-none')
             // Fetch datas from API.
-            const datas = await fetchDatas(window.location.origin + '/' + this.dataset.listing + 's')
+            const datas = await fetchDatas(domainName + '/' + this.dataset.listing + 's')
             // Create HTML products listing table.
             createTable(datas, document.querySelector('#listing'))
             // Add Listing title.
@@ -238,6 +290,8 @@ function createListingDatas(arrayLinks, inputSubmit) {
                     loadCountries(document.querySelector("#product-country"))
                 }
             })
+            // On edit button click.
+            editItem(document.querySelectorAll('#listing .listing-item-actions .btn-warning'))
             // On delete button click.
             deleteItem(document.querySelectorAll('#listing .listing-item-actions .btn-danger'))
         })
@@ -283,8 +337,8 @@ function createTable(datas, htmlElem) {
                 html += `<td>${value}</td>` 
             }
             html += `<td class="listing-item-actions">`
-            html += `<input class="btn btn-warning btn-sm" type="button" value="Edit">`
-            html += `<input class="btn btn-danger btn-sm" type="button" value="Delete">`
+            html += `<input class="btn btn-warning btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#productModal" value="Edit">`
+            html += `<input class="btn btn-danger btn-sm" type="button" value="Delete" data-index="${data.id}">`
             html += `</td>`
             html += `</tr>`
         }
