@@ -4,13 +4,24 @@
 const domainName = 'http://localhost:3000'
 
 /**
- * Function - Fetch data.
+ * ASYNC Function - Fetch data.
  * @param {String} url - URL of the API to fetch.
  * @returns Object with datas.
  */
  async function fetchData(url) {
     return fetch(url)
     .then(res => res.json())
+}
+
+/**
+ * ASYNC Function - Get a specific item.
+ * @param {Number} id - ID of the item.
+ * @param {string} apiPath - Path of the api item.
+ */
+const getItem = async function(id, apiPath) {
+    const response = await fetch(domainName + apiPath + '/' + id)
+    const item = await response.json()
+    return item
 }
 
 /**
@@ -23,7 +34,7 @@ const getItems = async function(apiPath) {
         const data = await response.json()
         return data
     } else {
-        console.error('Error : ', response.status);
+        console.error('Error : ', response.status)
     }
 }
 
@@ -50,7 +61,7 @@ const insertItem = async function(objectData, apiPath) {
 }
 
 /**
- * Function - Delete listing item.
+ * ASYNC Function - Delete listing item.
  * @param {Number} id - ID of the item to delete.
  */
 const deleteItem = async function(id) {
@@ -63,17 +74,18 @@ const deleteItem = async function(id) {
 }
 
 /**
- * Function - Edit listing item.
+ * ASYNC Function - Edit listing item.
 * @param {Number} id - ID of the item to edit.
 */
 const editItem = async function(id) {
+
+    
     const page = document.querySelector('#btn-add').dataset.path
     const response = await fetch(domainName + '/' + page + '/' + id, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(objectData) from function params
         body: JSON.stringify({
             id: '',
             name: 'edited name',
@@ -85,7 +97,6 @@ const editItem = async function(id) {
             price_supplier: 'edited price_supplier'
         })
     })
-    console.log(response)
     // Fetch new items with last edited item.
     const items  = await getItems('/' + page)
     // Reload listing with new data inserted after getting new listing with new product.
@@ -129,10 +140,12 @@ const createTable = function(datas, htmlElem) {
         html = '<span>There is no product.</span>'
         htmlElem.innerHTML = html
     }
-    // Set delete event on action buttons.
-    setActionBtnEvent(document.querySelectorAll('#listing .listing-item-actions .btn-danger'), deleteItem)
+    // Set modal attributes on edit action buttons.
+    setModalAttr(document.querySelectorAll('#listing .listing-item-actions .btn-warning'), document.querySelector('input[data-page]'))
     // Set edit event on action buttons.
     setActionBtnEvent(document.querySelectorAll('#listing .listing-item-actions .btn-warning'), editItem)
+    // Set delete event on action buttons.
+    setActionBtnEvent(document.querySelectorAll('#listing .listing-item-actions .btn-danger'), deleteItem)
 }
 
 /**
@@ -141,20 +154,60 @@ const createTable = function(datas, htmlElem) {
  * @param {function} btnFunction - Function to use for the action.
  */
 const setActionBtnEvent = function(arrayBtns, btnFunction) {
-    // Set edit action buttons events.
+    // Set function action buttons events.
     for (const btn of arrayBtns) {
-        // On delete button click.
+        // On action button click.
         btn.addEventListener('click', function() {
-            // Get ID of item to delete.
+            // Get ID of current item.
             const id = this.dataset.index
-            // Edit item.
+            // If editItem function.
+            if (btnFunction === editItem) {
+                // jQuery modal selector.
+                const $modal = $(this.dataset.bsTarget)
+                const inputs = document.querySelectorAll(this.dataset.bsTarget + ' form *[name]')
+                // When modal is shown jQuery.
+                $modal.one('shown.bs.modal', async function() {
+                    const page = document.querySelector('#btn-add').dataset.path
+                    const item = await getItem(id, '/' + page)
+                    // If page is PRODUCT.
+                    if (document.querySelector('#btn-add').dataset.page === 'product') {
+                        // Fetch new items with last edited item.
+                        const suppliers  = await getItems('/suppliers')
+                        // Add suppliers to new product select form.
+                        createSelectOptions(suppliers, document.querySelector('#product-supplier'))
+                        // Load countries datas from API and insert them in select.
+                        loadCountries(document.querySelector("#product-country"))
+                        .then(async function() {
+                            // Fill country with existing value once coutries list is loaded.
+                            document.querySelector("#product-country").value = item.origin
+                        })
+                    }
+                    // Fill form with existing values.
+                    for (const input of inputs) {
+                        input.value = item[input.name]
+                    }
+                })
+            }
+            // Function item.
             btnFunction(id)
         })
     }
 }
 
 /**
- * Function - Create Listing of datas from API.
+ * Function - Set modal attributes on action
+ * @param {array} arrayBtns - Buttons to set modal attributes.
+ * @param {node} page - node who has page attribute.
+ */
+const setModalAttr = function(arrayBtns, page) {
+    for (const btn of arrayBtns) {
+        btn.setAttribute('data-bs-toggle', 'modal')
+        btn.setAttribute('data-bs-target', '#' + page.dataset.page + 'Modal')
+    }
+}
+
+/**
+ * ASYNC Function - Create Listing of datas from API.
  * @param {html} listing - HTML listing element having [data-listing] attribute.
  */
 const createListing = async function(listing) {
@@ -164,10 +217,10 @@ const createListing = async function(listing) {
     document.querySelector('#listing-title').innerHTML = capitalizeFirstLetter(listing.dataset.path)
     // Fetch new items with last edited item.
     const items  = await getItems('/' + listing.dataset.path)
-    // Create HTML products listing table.
-    createTable(items, document.querySelector('#listing'))
     // Display add button of current listing.
     showListingAddBtn(listing)
+    // Create HTML products listing table.
+    createTable(items, document.querySelector('#listing'))
 }
 
 /**
@@ -203,27 +256,24 @@ const showListingAddBtn = function(listing) {
  * Function - Create countries name options for HTML select.
  * @param {html} selectElem - HTML select to insert countries options.
  */
-const loadCountries = function(selectElem) {
-    fetch("https://restcountries.com/v3.1/all")
-    .then(function(response){
-        if(response.ok){
-            response.json().then(function(countries){
-                // Sort objects in an array alphabetically on one property of the array.
-                let countriesSort = countries.sort(function(a, b) {
-                    var textA = a.name.common
-                    var textB = b.name.common
-                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-                })
-                let html = ''
-                for (const country of countriesSort) {
-                    html += `<option>${country.name.common}</option>`
-                }
-                if(selectElem) {
-                    selectElem.innerHTML = html
-                }
-            })
+const loadCountries = async function(selectElem) {
+    const response = await fetch("https://restcountries.com/v3.1/all")
+    if(response.ok){
+        const countries = await response.json()
+        // // Sort objects in an array alphabetically on one property of the array.
+        let countriesSort = countries.sort(function(a, b) {
+            var textA = a.name.common
+            var textB = b.name.common
+            return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+        })
+        let html = ''
+        for (const country of countriesSort) {
+            html += `<option>${country.name.common}</option>`
         }
-    })
+        if(selectElem) {
+            selectElem.innerHTML = html
+        }
+    }
 }
 
 /**
