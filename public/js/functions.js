@@ -4,11 +4,11 @@
 const domainName = 'http://localhost:3000'
 
 /**
- * Function - Fetch datas.
+ * Function - Fetch data.
  * @param {String} url - URL of the API to fetch.
  * @returns Object with datas.
  */
- async function fetchDatas(url) {
+ async function fetchData(url) {
     return fetch(url)
     .then(res => res.json())
 }
@@ -93,10 +93,53 @@ const editItem = async function(id) {
 }
 
 /**
+ * Function - Create HTML table with datas and insert it into DOM HTML element.
+ * @param {Array} datas - Array of datas.
+ * @param {html} htmlElem - DOM HTML element.
+ */
+const createTable = function(datas, htmlElem) {
+    let html = ''
+    // If at least 1 data exists.
+    if(datas.length > 0) {
+        html += `<div class="table-responsive">`
+        html += `<table class="table table-dark table-hover">`
+        html += `<thead>`
+        for (const key of Object.keys(datas[0])) {
+            html += `<th>${key}</th>`
+        }
+        html += `<th>Actions</th>`
+        html += `</thead>`
+        for (const data of datas) {
+            html += `<tr>` 
+            for (const value of Object.values(data)) {
+                html += `<td>${value}</td>` 
+            }
+            html += `<td class="listing-item-actions">`
+            html += `<input class="btn btn-warning btn-sm" type="button" value="Edit" data-index="${data.id}">`
+            html += `<input class="btn btn-danger btn-sm" type="button" value="Delete" data-index="${data.id}">`
+            html += `</td>`
+            html += `</tr>`
+        }
+        html += `</table>`
+        html += `</div>`
+        
+        htmlElem.innerHTML = html
+    } else {
+        // No product in API database.
+        html = '<span>There is no product.</span>'
+        htmlElem.innerHTML = html
+    }
+    // Set delete event on action buttons.
+    setActionBtnEvent(document.querySelectorAll('#listing .listing-item-actions .btn-danger'), deleteItem)
+    // Set edit event on action buttons.
+    setActionBtnEvent(document.querySelectorAll('#listing .listing-item-actions .btn-warning'), editItem)
+}
+
+/**
  * Function - Create Listing of datas from API.
  * @param {html} listing - HTML listing element having [data-listing] attribute.
  */
-async function createListing(listing) {
+const createListing = async function(listing) {
     // Hide Hero section.
     hideHtmlElem(document.querySelector('#hero'))
     // Add listing title.
@@ -182,7 +225,7 @@ const hideHtmlElem = function (element) {
  * @param {String} string - String to capitalize first letter.
  * @returns Given string with first letter capitalized.
  */
-function capitalizeFirstLetter(string) {
+const capitalizeFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
@@ -190,7 +233,7 @@ function capitalizeFirstLetter(string) {
  * Function - Create countries name options for HTML select.
  * @param {html} selectElem - HTML select to insert countries options.
  */
-function loadCountries(selectElem) {
+const loadCountries = function(selectElem) {
     fetch("https://restcountries.com/v3.1/all")
     .then(function(response){
         if(response.ok){
@@ -218,7 +261,7 @@ function loadCountries(selectElem) {
  * @param {Array} datas - Array of datas.
  * @param {html} htmlElem - DOM HTML element.
  */
-function createSelectOptions(datas, htmlElem) {
+const createSelectOptions = function(datas, htmlElem) {
     let html = ''
     for (const data of datas) {
         html += `<option>${data.name}</option>`
@@ -229,61 +272,19 @@ function createSelectOptions(datas, htmlElem) {
 }
 
 /**
- * Function - Create HTML table with datas and insert it into DOM HTML element.
- * @param {Array} datas - Array of datas.
- * @param {html} htmlElem - DOM HTML element.
+ * Function - Set events for the action button.
+ * @param {array} arrayBtns - Buttons to set action events.
+ * @param {function} btnFunction - Function to use for the action.
  */
-function createTable(datas, htmlElem) {
-    let html = ''
-    // If at least 1 data exists.
-    if(datas.length > 0) {
-        html += `<div class="table-responsive">`
-        html += `<table class="table table-dark table-hover">`
-        html += `<thead>`
-        for (const key of Object.keys(datas[0])) {
-            html += `<th>${key}</th>`
-        }
-        html += `<th>Actions</th>`
-        html += `</thead>`
-        for (const data of datas) {
-            html += `<tr>` 
-            for (const value of Object.values(data)) {
-                html += `<td>${value}</td>` 
-            }
-            html += `<td class="listing-item-actions">`
-            html += `<input class="btn btn-warning btn-sm" type="button" value="Edit" data-index="${data.id}">`
-            html += `<input class="btn btn-danger btn-sm" type="button" value="Delete" data-index="${data.id}">`
-            html += `</td>`
-            html += `</tr>`
-        }
-        html += `</table>`
-        html += `</div>`
-        
-        htmlElem.innerHTML = html
-    } else {
-        // No product in API database.
-        html = '<span>There is no product.</span>'
-        htmlElem.innerHTML = html
-    }
-    // Set delete action buttons events.
-    for (const btn of document.querySelectorAll('#listing .listing-item-actions .btn-danger')) {
-        // On delete button click.
-        btn.addEventListener('click', function() {
-            // Get ID of item to delete.
-            const id = this.dataset.index
-            // Delete item.
-            deleteItem(id)
-        })
-    }
+const setActionBtnEvent = function(arrayBtns, btnFunction) {
     // Set edit action buttons events.
-    for (const btn of document.querySelectorAll('#listing .listing-item-actions .btn-warning')) {
+    for (const btn of arrayBtns) {
         // On delete button click.
         btn.addEventListener('click', function() {
             // Get ID of item to delete.
             const id = this.dataset.index
-            console.log(id)
             // Edit item.
-            editItem(id)
+            btnFunction(id)
         })
     }
 }
