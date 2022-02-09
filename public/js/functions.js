@@ -136,6 +136,24 @@ const createTable = function(datas, htmlElem) {
 }
 
 /**
+ * Function - Set events for the action button.
+ * @param {array} arrayBtns - Buttons to set action events.
+ * @param {function} btnFunction - Function to use for the action.
+ */
+const setActionBtnEvent = function(arrayBtns, btnFunction) {
+    // Set edit action buttons events.
+    for (const btn of arrayBtns) {
+        // On delete button click.
+        btn.addEventListener('click', function() {
+            // Get ID of item to delete.
+            const id = this.dataset.index
+            // Edit item.
+            btnFunction(id)
+        })
+    }
+}
+
+/**
  * Function - Create Listing of datas from API.
  * @param {html} listing - HTML listing element having [data-listing] attribute.
  */
@@ -179,6 +197,48 @@ const showListingAddBtn = function(listing) {
             loadCountries(document.querySelector("#product-country"))
         }
     })    
+}
+
+/**
+ * Function - Create countries name options for HTML select.
+ * @param {html} selectElem - HTML select to insert countries options.
+ */
+const loadCountries = function(selectElem) {
+    fetch("https://restcountries.com/v3.1/all")
+    .then(function(response){
+        if(response.ok){
+            response.json().then(function(countries){
+                // Sort objects in an array alphabetically on one property of the array.
+                let countriesSort = countries.sort(function(a, b) {
+                    var textA = a.name.common
+                    var textB = b.name.common
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
+                })
+                let html = ''
+                for (const country of countriesSort) {
+                    html += `<option>${country.name.common}</option>`
+                }
+                if(selectElem) {
+                    selectElem.innerHTML = html
+                }
+            })
+        }
+    })
+}
+
+/**
+ * Function - Create select options with datas and insert it into HTML DOM element.
+ * @param {Array} datas - Array of datas.
+ * @param {html} htmlElem - DOM HTML element.
+ */
+const createSelectOptions = function(datas, htmlElem) {
+    let html = ''
+    for (const data of datas) {
+        html += `<option>${data.name}</option>`
+    }
+    if(htmlElem) {
+        htmlElem.innerHTML = html
+    }
 }
 
 /**
@@ -227,64 +287,4 @@ const hideHtmlElem = function (element) {
  */
 const capitalizeFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-/**
- * Function - Create countries name options for HTML select.
- * @param {html} selectElem - HTML select to insert countries options.
- */
-const loadCountries = function(selectElem) {
-    fetch("https://restcountries.com/v3.1/all")
-    .then(function(response){
-        if(response.ok){
-            response.json().then(function(countries){
-                // Sort objects in an array alphabetically on one property of the array.
-                let countriesSort = countries.sort(function(a, b) {
-                    var textA = a.name.common
-                    var textB = b.name.common
-                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0
-                })
-                let html = ''
-                for (const country of countriesSort) {
-                    html += `<option>${country.name.common}</option>`
-                }
-                if(selectElem) {
-                    selectElem.innerHTML = html
-                }
-            })
-        }
-    })
-}
-
-/**
- * Function - Create select options with datas and insert it into HTML DOM element.
- * @param {Array} datas - Array of datas.
- * @param {html} htmlElem - DOM HTML element.
- */
-const createSelectOptions = function(datas, htmlElem) {
-    let html = ''
-    for (const data of datas) {
-        html += `<option>${data.name}</option>`
-    }
-    if(htmlElem) {
-        htmlElem.innerHTML = html
-    }
-}
-
-/**
- * Function - Set events for the action button.
- * @param {array} arrayBtns - Buttons to set action events.
- * @param {function} btnFunction - Function to use for the action.
- */
-const setActionBtnEvent = function(arrayBtns, btnFunction) {
-    // Set edit action buttons events.
-    for (const btn of arrayBtns) {
-        // On delete button click.
-        btn.addEventListener('click', function() {
-            // Get ID of item to delete.
-            const id = this.dataset.index
-            // Edit item.
-            btnFunction(id)
-        })
-    }
 }
