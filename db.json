@@ -99,16 +99,6 @@
       "price_sell": "3",
       "supplier": "Carrefour",
       "price_supplier": "1"
-    },
-    {
-      "id": 11,
-      "name": "Brocoli",
-      "category": "vegetable",
-      "origin": "Ukraine",
-      "stock": "40",
-      "price_sell": "4",
-      "supplier": "Carrefour",
-      "price_supplier": "2"
     }
   ],
   "customers": [
