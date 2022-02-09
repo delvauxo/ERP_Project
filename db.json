@@ -7,7 +7,7 @@
       "origin": "France",
       "stock": "15",
       "price_sell": "3",
-      "supplier": "delhaize",
+      "supplier": "Delhaize",
       "price_supplier": "1"
     },
     {
@@ -17,7 +17,7 @@
       "origin": "Spain",
       "stock": "5",
       "price_sell": "9",
-      "supplier": "delhaize",
+      "supplier": "Delhaize",
       "price_supplier": "5"
     },
     {
@@ -27,7 +27,7 @@
       "origin": "Italy",
       "stock": "16",
       "price_sell": "5",
-      "supplier": "carrefour",
+      "supplier": "Carrefour",
       "price_supplier": "3"
     },
     {
