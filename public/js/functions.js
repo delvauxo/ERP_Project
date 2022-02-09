@@ -79,28 +79,28 @@ const deleteItem = async function(id) {
 */
 const editItem = async function(id) {
 
-    
     const page = document.querySelector('#btn-add').dataset.path
-    const response = await fetch(domainName + '/' + page + '/' + id, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            id: '',
-            name: 'edited name',
-            category: 'edited category',
-            origin: 'edited country',
-            stock: 'edited stock',
-            price_sell: 'edited price_sell',
-            supplier: 'edited supplier',
-            price_supplier: 'edited price_supplier'
-        })
-    })
+    console.log('Inside EDIT function.')
+    // const response = await fetch(domainName + '/' + page + '/' + id, {
+    //     method: 'PUT',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         id: '',
+    //         name: 'edited name',
+    //         category: 'edited category',
+    //         origin: 'edited country',
+    //         stock: 'edited stock',
+    //         price_sell: 'edited price_sell',
+    //         supplier: 'edited supplier',
+    //         price_supplier: 'edited price_supplier'
+    //     })
+    // })
     // Fetch new items with last edited item.
-    const items  = await getItems('/' + page)
+    // const items  = await getItems('/' + page)
     // Reload listing with new data inserted after getting new listing with new product.
-    createTable(items, document.querySelector('#listing'))
+    // createTable(items, document.querySelector('#listing'))
 }
 
 /**
@@ -162,13 +162,18 @@ const setActionBtnEvent = function(arrayBtns, btnFunction) {
             const id = this.dataset.index
             // If editItem function.
             if (btnFunction === editItem) {
+                const path = document.querySelector('#btn-add').dataset.path
+                const page = document.querySelector('#btn-add').dataset.page
+                // Reset form.
+                document.querySelector('#' + page + 'Modal' + ' form').reset()
+                // Set modal title for edit.
+                document.querySelector('#' + page + 'ModalLabel').innerHTML = 'Edit ' + page
                 // jQuery modal selector.
                 const $modal = $(this.dataset.bsTarget)
                 const inputs = document.querySelectorAll(this.dataset.bsTarget + ' form *[name]')
                 // When modal is shown jQuery.
                 $modal.one('shown.bs.modal', async function() {
-                    const page = document.querySelector('#btn-add').dataset.path
-                    const item = await getItem(id, '/' + page)
+                    const item = await getItem(id, '/' + path)
                     // If page is PRODUCT.
                     if (document.querySelector('#btn-add').dataset.page === 'product') {
                         // Fetch new items with last edited item.
@@ -240,6 +245,10 @@ const showListingAddBtn = function(listing) {
     inputSubmit.addEventListener('click', async function(e) {
         // Stop propagation if click on multiples menu btns before add item.
         e.stopImmediatePropagation()
+        // Reset form.
+        document.querySelector('#' + listing.dataset.listing + 'Modal' + ' form').reset()
+        // Set modal title with ADD.
+        document.querySelector('#' + listing.dataset.listing + 'ModalLabel').innerHTML = 'Add a new ' + listing.dataset.listing
         // If page is PRODUCT.
         if (this.dataset.page === 'product') {
             // Fetch new items with last edited item.
