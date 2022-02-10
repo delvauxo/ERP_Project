@@ -13,5 +13,3 @@ createListingDatas(document.querySelectorAll('[data-listing]'), document.querySe
 formSubmit(document.querySelector('#form-product'), Product, insertProduct, getProducts, '#productModal')
 formSubmit(document.querySelector('#form-supplier'), Supplier, insertSupplier, getSuppliers, '#supplierModal')
 formSubmit(document.querySelector('#form-customer'), Customer, insertCustomer, getCustomers, '#customerModal')
-
-console.log('HEROKUUUUUUU')
