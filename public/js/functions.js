@@ -44,8 +44,10 @@ const getItems = async function(apiPath) {
  * @param {string} apiPath - Path of the API to fetch.
  */
 const insertItem = async function(objectData, apiPath) {
+    const currentModal = document.querySelector('#btn-add').dataset.bsTarget
+    const method = document.querySelector(currentModal + ' form[data-method]').dataset.method
     const response = await fetch(domainName + apiPath, {
-        method: 'POST',
+        method: method,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -77,30 +79,25 @@ const deleteItem = async function(id) {
  * ASYNC Function - Edit listing item.
 * @param {Number} id - ID of the item to edit.
 */
-const editItem = async function(id) {
+const editItem = async function(objectData, apiPath, id) {
 
-    const page = document.querySelector('#btn-add').dataset.path
-    console.log('Inside EDIT function.')
-    // const response = await fetch(domainName + '/' + page + '/' + id, {
-    //     method: 'PUT',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //         id: '',
-    //         name: 'edited name',
-    //         category: 'edited category',
-    //         origin: 'edited country',
-    //         stock: 'edited stock',
-    //         price_sell: 'edited price_sell',
-    //         supplier: 'edited supplier',
-    //         price_supplier: 'edited price_supplier'
-    //     })
-    // })
-    // Fetch new items with last edited item.
-    // const items  = await getItems('/' + page)
-    // Reload listing with new data inserted after getting new listing with new product.
-    // createTable(items, document.querySelector('#listing'))
+    const currentModal = document.querySelector('#btn-add').dataset.bsTarget
+    const method = document.querySelector(currentModal + ' form[data-method]').dataset.method
+
+    const response = await fetch(domainName + apiPath + '/' + id, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(objectData)
+    })
+    if (!response.ok) {
+        console.error('Error : ' + response.status)
+    }
+    // Fetch new datas after form reset.
+    const items  = await getItems(apiPath)
+    // Reload listing with new data inserted after getting new listing with new item.
+    createTable(items, document.querySelector('#listing'))
 }
 
 /**
@@ -164,8 +161,13 @@ const setActionBtnEvent = function(arrayBtns, btnFunction) {
             if (btnFunction === editItem) {
                 const path = document.querySelector('#btn-add').dataset.path
                 const page = document.querySelector('#btn-add').dataset.page
+                const form = document.querySelector('#' + page + 'Modal' + ' form')
                 // Reset form.
-                document.querySelector('#' + page + 'Modal' + ' form').reset()
+                form.reset()
+                // Set method attribute to form.
+                form.setAttribute('data-method', 'PUT')
+                // Set selected ID as attribute.
+                form.setAttribute('data-item-id', id)
                 // Set modal title for edit.
                 document.querySelector('#' + page + 'ModalLabel').innerHTML = 'Edit ' + page
                 // jQuery modal selector.
@@ -192,9 +194,10 @@ const setActionBtnEvent = function(arrayBtns, btnFunction) {
                         input.value = item[input.name]
                     }
                 })
+            } else if (btnFunction === deleteItem) {
+                // delete item.
+                deleteItem(id)
             }
-            // Function item.
-            btnFunction(id)
         })
     }
 }
@@ -245,10 +248,15 @@ const showListingAddBtn = function(listing) {
     inputSubmit.addEventListener('click', async function(e) {
         // Stop propagation if click on multiples menu btns before add item.
         e.stopImmediatePropagation()
+        // Selectors.
+        const page = this.dataset.page
+        const form = document.querySelector('#' + page + 'Modal' + ' form')
         // Reset form.
-        document.querySelector('#' + listing.dataset.listing + 'Modal' + ' form').reset()
+        form.reset()
+        // Set method attribute to form.
+        form.setAttribute('data-method', 'POST')
         // Set modal title with ADD.
-        document.querySelector('#' + listing.dataset.listing + 'ModalLabel').innerHTML = 'Add a new ' + listing.dataset.listing
+        document.querySelector('#' + page + 'ModalLabel').innerHTML = 'Add a new ' + page
         // If page is PRODUCT.
         if (this.dataset.page === 'product') {
             // Fetch new items with last edited item.
@@ -319,14 +327,33 @@ const formSubmit = function(htmlForm, className, apiPath, idModal) {
         const datas = Object.fromEntries(formData)
         // Instanciate new class Object with form datas.
         const item = Object.assign(datas, className)
-        // Insert new Product in API database.
-        insertItem(item, apiPath)
-        .then(async function() {
-            // Hide modal after datas sent (jQuery).
-            $(idModal).modal('hide')
-            // Reset form after modal is hidden.
-            htmlForm.reset()
-        })
+        // Get fetch method.
+        const method = document.querySelector(idModal + ' form[data-method]').dataset.method
+        // Get ID for edit fetch method.
+        let id = null
+        if (document.querySelector(idModal + ' form')) {
+            id = document.querySelector(idModal + ' form').dataset.itemId
+        }
+        // Fetch Methods.
+        if (method === 'POST') {
+            // Insert new item in API database.
+            insertItem(item, apiPath, method)
+            .then(async function() {
+                // Hide modal after datas sent (jQuery).
+                $(idModal).modal('hide')
+                // Reset form after modal is hidden.
+                htmlForm.reset()
+            })
+        } else if (method === 'PUT') {
+            // Update new item in API database.
+            editItem(item, apiPath, id)
+            .then(async function() {
+                // Hide modal after datas sent (jQuery).
+                $(idModal).modal('hide')
+                // Reset form after modal is hidden.
+                htmlForm.reset()
+            })
+        }
     })
 }
 
